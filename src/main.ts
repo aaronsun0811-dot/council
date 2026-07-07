@@ -3517,6 +3517,7 @@ function renderHistory() {
     listEl.appendChild(empty);
     viewEl.textContent = "";
     historyViewId = null;
+    updateHistoryOpenBtn();
     return;
   }
   if (!rows.length) {
@@ -3526,6 +3527,7 @@ function renderHistory() {
     listEl.appendChild(empty);
     viewEl.textContent = "";
     historyViewId = null;
+    updateHistoryOpenBtn();
     return;
   }
   if (!historyViewId || !rows.some((r) => r.key === historyViewId)) historyViewId = rows[0].key;
@@ -3583,16 +3585,24 @@ function renderHistory() {
       renderChatHistory();
     });
     item.append(del);
+    // Clicking only selects the entry so its content shows in the right pane; restoring is
+    // the explicit 继续任务编排 / 打开该记录 button below, so old records can be browsed safely.
     item.addEventListener("click", () => {
       historyViewId = row.key;
-      if (row.kind === "code") loadCodeTask(row.task);
-      else loadHistEntry(row.entry);
-      historyModal.classList.add("hidden");
+      renderHistory();
     });
     listEl.appendChild(item);
   }
   const cur = rows.find((r) => r.key === historyViewId) ?? rows[0];
   viewEl.textContent = cur ? historyRowText(cur) : "";
+  updateHistoryOpenBtn(cur);
+}
+// The open button restores the selected entry: code tasks refill the 任务编排 form ("继续任务编排"),
+// everything else reopens its transcript in the results window ("打开该记录").
+function updateHistoryOpenBtn(cur?: HistoryRow) {
+  const btn = $<HTMLButtonElement>("#history-open");
+  btn.disabled = !cur;
+  btn.textContent = cur?.kind === "code" ? t("hist.resume") : t("hist.open");
 }
 
 // ---- 技能库大窗（按分类浏览 / 搜索 / 管理）----
@@ -5643,6 +5653,16 @@ $("#history-copy").addEventListener("click", async () => {
     toast(t("toast.copiedEntry"), "info");
   } catch {
     /* clipboard blocked */
+  }
+});
+$("#history-open").addEventListener("click", () => {
+  const cur = historyRows().find((r) => r.key === historyViewId);
+  if (!cur) return;
+  if (cur.kind === "code") {
+    loadCodeTask(cur.task);
+    historyModal.classList.add("hidden");
+  } else {
+    loadHistEntry(cur.entry); // closes the modal itself
   }
 });
 void listen<string>("browser-insert-url", (e) => {

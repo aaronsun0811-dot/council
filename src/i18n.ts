@@ -220,9 +220,11 @@ export const ZH: Record<string, string> = {
   "ch.close": "关闭",
   // run-history modal
   "hist.title": "历史会话",
-  "hist.note": "工作流 / GEO / 圆桌 / 任务编排 / 聊天 / 终端都会自动存到这里。可按类型、模型或关键词筛选；点条目可恢复或回看，图钉可置顶。",
+  "hist.note": "工作流 / GEO / 圆桌 / 任务编排 / 聊天 / 终端都会自动存到这里。可按类型、模型或关键词筛选；点条目先在右侧查看内容，用下方按钮恢复或继续，图钉可置顶。",
   "hist.clear": "清空历史",
   "hist.copy": "复制本条",
+  "hist.resume": "继续任务编排",
+  "hist.open": "打开该记录",
   "hist.close": "关闭",
   "hist.searchPh": "筛选标题 / 内容 / 模型 / 目录...",
   "hist.filterAll": "全部",
